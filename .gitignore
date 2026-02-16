@@ -1,0 +1,174 @@
+# =============================================================================
+# .gitignore for Quarto Projects (Python, Jupyter, R)
+# =============================================================================
+
+# =============================================================================
+# Python
+# =============================================================================
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment directories
+.python-version
+.venv/
+venv/
+ENV/
+env/
+
+# pip installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# =============================================================================
+# Jupyter / IPython
+# =============================================================================
+
+# Jupyter Notebook checkpoint files (auto-saved copies)
+.ipynb_checkpoints/
+
+# IPython history and profile
+.ipython/
+profile_default/
+
+# Jupyter runtime files
+*.ipynb_metadata
+
+# =============================================================================
+# R / RStudio
+# =============================================================================
+
+# R history file (records console commands)
+.Rhistory
+
+# R data file (saved workspace image)
+.RData
+
+# R environment file (user-specific settings)
+.Renviron
+
+# RStudio project-level user settings
+.Rproj.user/
+
+# R session data directory
+.Rsession/
+
+# R package library paths (user-specific)
+.Rprofile
+
+# Compiled R package files
+*.Rcheck/
+
+# =============================================================================
+# Quarto
+# =============================================================================
+
+# Quarto render output and cache directories
+_site/
+_book/
+_freeze/
+.quarto/
+
+# =============================================================================
+# Data Files (excluded by default to prevent large data from entering repo)
+# =============================================================================
+
+# Comma-separated values
+*.csv
+
+# Tab-separated values
+*.tsv
+
+# Microsoft Excel files (both legacy and modern formats)
+*.xls
+*.xlsx
+*.xlsm
+*.xlsb
+
+# Stata data files
+*.dta
+
+# R data formats
+*.RData
+*.rda
+*.rds
+*.Rda
+
+# SAS data files
+*.sas7bdat
+*.sas7bcat
+*.xpt
+
+# SPSS data files
+*.sav
+*.por
+
+# Apache Parquet columnar storage
+*.parquet
+
+# Feather / Arrow format
+*.feather
+*.arrow
+
+# HDF5 hierarchical data format
+*.h5
+*.hdf5
+
+# JSON data files (uncomment if needed; commented because config files use .json)
+# *.json
+
+# SQLite database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Pickle files (Python serialized objects)
+*.pkl
+*.pickle
+
+# =============================================================================
+# OS-generated files
+# =============================================================================
+
+# macOS Finder metadata
+.DS_Store
+.DS_Store?
+
+# macOS resource forks
+._*
+
+# Windows thumbnail cache
+Thumbs.db
+
+# Windows desktop configuration
+Desktop.ini
+
+# Linux trash metadata
+.Trash-*
+
+# =============================================================================
+# IDE / Editor files
+# =============================================================================
+
+# Visual Studio Code workspace settings
+.vscode/
+
+# JetBrains IDEs (PyCharm, IntelliJ, etc.)
+.idea/
+
+# Sublime Text project files
+*.sublime-project
+*.sublime-workspace
+
+# Vim swap files
+*.swp
+*.swo
+*~
+
+# Microsoft Word temporary lock files
+~$*.docx
+~$*.doc
+
+/.quarto/
