@@ -1,0 +1,336 @@
+---
+title: "When Are Tip The Best?"
+subtitle: "A Day-of-Week Analysis of Restaurant Tipping Patterns"
+author: "Your Name"
+date: today
+format:
+  revealjs:
+    theme: simple
+    transition: slide
+    slide-number: true
+    chalkboard: true
+    navigation-mode: linear
+    controls: true
+    controls-layout: bottom-right
+    controls-tutorial: true
+    overview: true
+    hash-type: number
+    menu:
+      side: left
+      width: wide
+    footer: "Tipping Patterns Analysis"
+    logo: ""
+    code-fold: true
+    code-summary: "Code"
+    scrollable: true
+    smaller: false
+    view:
+      scroll: false
+      speaker: true
+bibliography: references.bib
+execute:
+  warning: false
+  message: false
+  echo: true
+---
+
+```{python}
+#| label: setup
+#| include: false
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+from scipy import stats
+
+tips = sns.load_dataset("tips")
+tips["tip_pct"] = (tips["tip"] / tips["total_bill"]) * 100
+day_order = ["Thur", "Fri", "Sat", "Sun"]
+```
+
+## Agenda {.smaller}
+
+1. **The Question**: On which days do patrons tip best?
+2. **The Data**: Seaborn tips dataset overview
+3. **Absolute Tips**: Dollar amounts by day
+4. **Tip Percentages**: Controlling for bill size
+5. **Contextual Factors**: Meal time, party size, smoking
+6. **Conclusions**: Key takeaways and recommendations
+
+::: {.callout-note}
+Use **S** to open speaker view. Press **O** for slide overview. Press **?** for keyboard shortcuts.
+:::
+
+# The Data {background-color="#c9c9c9ff"}
+
+::: {.callout-tip}
+This slide demonstrates how you can change the background color of a title slide.
+:::
+
+## Dataset Overview
+
+The **tips dataset** [@waskom2021seaborn] contains 244 observations collected by a single waiter over several months.
+
+**Variables include:**
+
+- `total_bill` — Total bill amount in dollars
+- `tip` — Tip amount in dollars
+- `sex`, `smoker` — Patron demographics
+- `day`, `time` — When the meal occurred
+- `size` — Party size
+
+## Summary by Day
+
+@tbl-slides-summary shows key statistics for each day.
+
+```{python}
+#| label: tbl-slides-summary
+#| tbl-cap: "Tips Summary by Day of the Week"
+#| code-fold: false
+#| output-location: slide
+
+summary = tips.groupby("day").agg(
+    N=("tip", "count"),
+    Mean_Tip=("tip", "mean"),
+    Median_Tip=("tip", "median"),
+    Mean_Bill=("total_bill", "mean")
+).round(2).reindex(day_order)
+
+summary.columns = ["N", "Mean Tip ($)", "Med Tip ($)", "Mean Bill ($)"]
+summary
+```
+
+::: {.callout-tip}
+## Quick Observation
+Notice how this slide uses `#| output-location: slide` to display the table on the the next slide.
+:::
+
+# Absolute Tip Amounts {background-color="#2d4059"}
+
+## Tip Distribution by Day {.smaller}
+
+```{python}
+#| label: fig-slides-boxplot
+#| fig-cap: "Box Plot of Tip Amounts by Day"
+
+fig, ax = plt.subplots(figsize=(10, 4))
+sns.boxplot(data=tips, x="day", y="tip", order=day_order,
+            palette="Set2", ax=ax)
+ax.set_xlabel("Day of the Week")
+ax.set_ylabel("Tip Amount ($)")
+ax.set_title("Tip Amounts by Day")
+plt.tight_layout()
+plt.show()
+```
+
+**Key takeaway**: Sunday shows the highest median tip. See @fig-slides-boxplot.
+
+## Violin Plot View
+
+@fig-slides-violin reveals the full shape of each distribution.
+
+```{python}
+#| label: fig-slides-violin
+#| fig-cap: "Violin Plot of Tip Amounts by Day"
+#| code-fold: false
+#| output-location: slide
+
+fig, ax = plt.subplots(figsize=(10, 4))
+sns.violinplot(data=tips, x="day", y="tip", order=day_order,
+               palette="muted", inner="quartile", ax=ax)
+ax.set_xlabel("Day of the Week")
+ax.set_ylabel("Tip Amount ($)")
+ax.set_title("Distribution Shape by Day")
+plt.tight_layout()
+plt.show()
+```
+
+## Confidence Intervals {.smaller}
+
+@tbl-slides-ci provides 95% confidence intervals for mean tips.
+
+```{python}
+#| label: tbl-slides-ci
+#| tbl-cap: "Mean Tip with 95% CI by Day"
+
+records = []
+for day in day_order:
+    day_tips = tips[tips["day"] == day]["tip"]
+    mean = day_tips.mean()
+    se = stats.sem(day_tips)
+    ci = stats.t.interval(0.95, len(day_tips) - 1, loc=mean, scale=se)
+    records.append({
+        "Day": day,
+        "Mean ($)": round(mean, 2),
+        "CI Lower ($)": round(ci[0], 2),
+        "CI Upper ($)": round(ci[1], 2)
+    })
+
+pd.DataFrame(records)
+```
+
+::: {.callout-important}
+## Overlapping Confidence Intervals
+The confidence intervals for all four days overlap substantially, meaning the
+differences in mean tips are **not statistically significant** at conventional
+levels.
+:::
+
+# Tip Percentages {background-color="#2d4059"}
+
+## Why Percentages Matter
+
+Absolute tips correlate with bill size. A $5 tip on a $25 bill (20%) reflects
+more generosity than a $5 tip on a $50 bill (10%).
+
+$$\text{Tip Percentage} = \frac{\text{Tip}}{\text{Total Bill}} \times 100$$
+
+::: {.callout-tip}
+## Use LaTeX Math
+This slide demonstrates how to use LaTeX math in Quarto slides.
+:::
+
+## Percentage by Day {.smaller}
+
+```{python}
+#| label: fig-slides-pct
+#| fig-cap: "Tip Percentage by Day of the Week"
+
+fig, ax = plt.subplots(figsize=(10, 4))
+sns.boxplot(data=tips, x="day", y="tip_pct", order=day_order,
+            palette="Set3", ax=ax)
+ax.set_xlabel("Day of the Week")
+ax.set_ylabel("Tip (%)")
+ax.set_title("Tip as Percentage of Total Bill")
+plt.tight_layout()
+plt.show()
+```
+
+As @fig-slides-pct shows, tip percentages are **remarkably stable** across days (~15–17%).
+
+## Percentage Summary {.smaller}
+
+```{python}
+#| label: tbl-slides-pct
+#| tbl-cap: "Tip Percentage Summary by Day"
+
+pct_summary = tips.groupby("day")["tip_pct"].agg(
+    ["mean", "median", "std"]
+).round(2).reindex(day_order)
+pct_summary.columns = ["Mean (%)", "Median (%)", "Std Dev (%)"]
+pct_summary
+```
+
+@tbl-slides-pct confirms the narrow range of tip percentages across days.
+
+# Contextual Factors {background-color="#2d4059"}
+
+## Meal Time × Day {.smaller}
+
+```{python}
+#| label: fig-slides-time
+#| fig-cap: "Tips by Day and Meal Time"
+#| code-fold: false
+#| output-location: slide
+
+fig, ax = plt.subplots(figsize=(10, 4))
+sns.boxplot(data=tips, x="day", y="tip", hue="time",
+            order=day_order, palette="Paired", ax=ax)
+ax.set_xlabel("Day of the Week")
+ax.set_ylabel("Tip Amount ($)")
+ax.set_title("Tips by Day and Meal Time")
+ax.legend(title="Meal")
+plt.tight_layout()
+plt.show()
+```
+
+@fig-slides-time shows that **dinner tips exceed lunch tips** on days where both are available (Thursday, Friday).
+
+## Party Size Effect {.smaller}
+
+```{python}
+#| label: fig-slides-party
+#| fig-cap: "Party Size vs. Tip Amount by Day"
+#| code-fold: false
+#| output-location: slide
+
+fig, ax = plt.subplots(figsize=(10, 4))
+sns.scatterplot(data=tips, x="size", y="tip", hue="day",
+                hue_order=day_order, palette="deep",
+                alpha=0.7, s=60, ax=ax)
+ax.set_xlabel("Party Size")
+ax.set_ylabel("Tip Amount ($)")
+ax.set_title("Party Size vs. Tip by Day")
+ax.legend(title="Day")
+plt.tight_layout()
+plt.show()
+```
+
+::: {.callout-warning}
+## Confounding Variable
+Larger parties → larger bills → larger tips. Weekend days have larger parties
+on average, which inflates their absolute tip amounts. See @fig-slides-party.
+:::
+
+## Smoking Status {.smaller}
+
+```{python}
+#| label: fig-slides-smoke
+#| fig-cap: "Tips by Day and Smoking Status"
+
+fig, axes = plt.subplots(1, 2, figsize=(10, 4), sharey=True)
+for ax, smoker_val, title in zip(axes, ["No", "Yes"],
+                                  ["Non-Smokers", "Smokers"]):
+    subset = tips[tips["smoker"] == smoker_val]
+    sns.boxplot(data=subset, x="day", y="tip", order=day_order,
+                palette="Set2", ax=ax)
+    ax.set_title(title)
+    ax.set_xlabel("Day")
+    ax.set_ylabel("Tip ($)")
+plt.tight_layout()
+plt.show()
+```
+
+@fig-slides-smoke shows similar day-of-week patterns for both smokers and non-smokers.
+
+# Conclusions {background-color="#2d4059"}
+
+## Key Findings
+
+| Finding | Detail |
+|---------|--------|
+| **Highest absolute tips** | Sunday dinner |
+| **Tip percentages** | Stable across all days (~15–17%) |
+| **Main driver** | Bill size, not day-specific generosity |
+| **Confounders** | Party size, meal time |
+
+: Summary of Key Findings {#tbl-slides-findings}
+
+## Recommendations
+
+1. **For servers**: Weekend dinner shifts yield the highest dollar tips
+2. **For managers**: Staff experienced servers on Sunday evenings
+3. **For researchers**: Control for bill size and party size when comparing days
+
+::: {.callout-note}
+## Bottom Line
+Patrons are roughly equally generous across all days. Higher weekend tips
+reflect larger bills, not bigger hearts. [@james2021introduction; @wickham2014tidy]
+:::
+
+## References
+
+::: {#refs}
+:::
+
+## Thank You! {.center}
+
+Questions?
+
+::: {.callout-tip}
+## Resources
+- Full manuscript: `manuscript.qmd`
+- Data source: seaborn tips dataset [@waskom2021seaborn]
+- Visualization principles: @tufte2001visual
+:::

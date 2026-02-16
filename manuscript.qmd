@@ -1,0 +1,395 @@
+---
+title: "When Do Patrons Tip Best? An Analysis of Restaurant Tipping Patterns"
+author: "Your Name"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 3
+    number-sections: true
+    code-fold: true
+    code-summary: "Show code"
+    theme: cosmo
+    other-links:
+      - text: Download PDF
+        href: manuscript.pdf
+      - text: Download Word Document
+        href: resources/word_doc_base.docx
+  pdf:
+    toc: true
+    number-sections: true
+  docx:
+    reference-doc: resources/word_doc_base.docx
+    toc: true
+    number-sections: true
+bibliography: references.bib
+csl: https://www.zotero.org/styles/apa
+execute:
+  warning: false
+  message: false
+---
+
+```{python}
+#| label: setup
+#| include: false
+
+import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+import numpy as np
+
+# Load the tips dataset
+tips = sns.load_dataset("tips")
+```
+
+## Introduction {#sec-introduction}
+
+This report investigates tipping behavior in a restaurant setting, with a
+specific focus on identifying which days of the week patrons tend to tip their
+servers the best. Using the well-known tips dataset available through the
+seaborn library [@waskom2021seaborn], we explore how tipping varies across days,
+meal times, and party characteristics.
+
+Understanding tipping patterns is valuable for restaurant management, server
+scheduling, and labor economics research. As @tufte2001visual emphasizes,
+effective data visualization is essential for communicating quantitative
+findings, a principle we follow throughout this analysis.
+
+::: {.callout-note}
+## About the Dataset
+The tips dataset contains 244 observations of restaurant bills, tip amounts,
+and associated metadata including the day of the week, time of day, party size,
+and whether the patron was a smoker. The data were originally collected by a
+single waiter over a period of several months.
+:::
+
+### Data Overview {#sec-data-overview}
+
+@tbl-summary presents a summary of the dataset grouped by day of the week.
+
+```{python}
+#| label: tbl-summary
+#| tbl-cap: "Summary Statistics of Tips by Day of the Week"
+
+summary = tips.groupby("day").agg(
+    n=("tip", "count"),
+    mean_tip=("tip", "mean"),
+    median_tip=("tip", "median"),
+    std_tip=("tip", "std"),
+    mean_bill=("total_bill", "mean"),
+    mean_pct=("tip", lambda x: (x / tips.loc[x.index, "total_bill"] * 100).mean())
+).round(2)
+
+summary.columns = ["N", "Mean Tip ($)", "Median Tip ($)", "Std Dev ($)",
+                    "Mean Bill ($)", "Mean Tip (%)"]
+
+# Reorder days logically
+summary = summary.reindex(["Thur", "Fri", "Sat", "Sun"])
+summary
+```
+
+### Research Questions {#sec-research-questions}
+
+This manuscript addresses three primary questions:
+
+1. **Which day of the week yields the highest tips in absolute dollars?**
+2. **Which day yields the highest tip as a percentage of the total bill?**
+3. **What contextual factors—such as meal time, party size, and smoking status—interact with day-of-week tipping patterns?**
+
+::: {.callout-tip}
+## Reading This Report
+Each section builds on the previous one. @sec-tipping-by-day examines raw
+tipping patterns, @sec-contextual-factors explores moderating variables, and
+@sec-conclusions synthesizes the findings into actionable insights.
+:::
+
+## Tipping Patterns by Day {#sec-tipping-by-day}
+
+We begin by examining how tip amounts and tip percentages differ across the
+four days represented in the dataset. Following tidy data principles
+[@wickham2014tidy], the dataset is already structured with one observation per
+row, making it straightforward to analyze with pandas [@mckinney2011pandas].
+
+### Absolute Tip Amounts {#sec-absolute-tips}
+
+@fig-tip-by-day shows the distribution of tip amounts for each day of the week.
+
+```{python}
+#| label: fig-tip-by-day
+#| fig-cap: "Distribution of Tip Amounts by Day of the Week"
+
+fig, ax = plt.subplots(figsize=(8, 5))
+day_order = ["Thur", "Fri", "Sat", "Sun"]
+sns.boxplot(data=tips, x="day", y="tip", order=day_order,
+            palette="Set2", ax=ax)
+ax.set_xlabel("Day of the Week")
+ax.set_ylabel("Tip Amount ($)")
+ax.set_title("Tip Amounts by Day")
+plt.tight_layout()
+plt.show()
+```
+
+As shown in @fig-tip-by-day, Sunday shows the highest median tip amount, while
+Friday tends to have lower and more tightly clustered tips. Saturday and Sunday
+both exhibit greater variability, likely driven by larger dinner parties on
+weekends.
+
+#### Statistical Comparison {#sec-stat-comparison}
+
+To quantify these differences, @tbl-day-stats presents the mean and median tip
+for each day alongside a 95% confidence interval for the mean.
+
+```{python}
+#| label: tbl-day-stats
+#| tbl-cap: "Mean Tip with 95% Confidence Intervals by Day"
+
+from scipy import stats
+
+records = []
+for day in day_order:
+    day_tips = tips[tips["day"] == day]["tip"]
+    mean = day_tips.mean()
+    se = stats.sem(day_tips)
+    ci = stats.t.interval(0.95, len(day_tips) - 1, loc=mean, scale=se)
+    records.append({
+        "Day": day,
+        "Mean Tip ($)": round(mean, 2),
+        "95% CI Lower": round(ci[0], 2),
+        "95% CI Upper": round(ci[1], 2),
+        "Median Tip ($)": round(day_tips.median(), 2)
+    })
+
+pd.DataFrame(records)
+```
+
+#### Violin Plot Perspective {#sec-violin}
+
+A violin plot provides additional insight into the shape of each day's
+distribution. @fig-violin reveals that Sunday tips have a wider spread and a
+secondary mode at higher values.
+
+```{python}
+#| label: fig-violin
+#| fig-cap: "Violin Plot of Tip Amounts by Day"
+
+fig, ax = plt.subplots(figsize=(8, 5))
+sns.violinplot(data=tips, x="day", y="tip", order=day_order,
+               palette="muted", inner="quartile", ax=ax)
+ax.set_xlabel("Day of the Week")
+ax.set_ylabel("Tip Amount ($)")
+ax.set_title("Tip Distribution Shape by Day")
+plt.tight_layout()
+plt.show()
+```
+
+### Tip Percentage {#sec-tip-percentage}
+
+Absolute tip amounts can be misleading because they correlate with bill size.
+A more informative metric is the tip as a percentage of the total bill.
+
+```{python}
+#| label: fig-tip-pct
+#| fig-cap: "Tip Percentage by Day of the Week"
+
+tips["tip_pct"] = (tips["tip"] / tips["total_bill"]) * 100
+
+fig, ax = plt.subplots(figsize=(8, 5))
+sns.boxplot(data=tips, x="day", y="tip_pct", order=day_order,
+            palette="Set3", ax=ax)
+ax.set_xlabel("Day of the Week")
+ax.set_ylabel("Tip (%)")
+ax.set_title("Tip as Percentage of Total Bill by Day")
+plt.tight_layout()
+plt.show()
+```
+
+::: {.callout-important}
+## Key Finding
+When measured as a percentage of the total bill (see @fig-tip-pct), the
+day-of-week differences narrow considerably. This suggests that much of the
+variation in absolute tip amounts is driven by differences in bill size rather
+than differences in generosity.
+:::
+
+#### Percentage Summary Table {#sec-pct-table}
+
+@tbl-pct-summary confirms that mean tip percentages are relatively stable
+across days, ranging from roughly 15% to 17%.
+
+```{python}
+#| label: tbl-pct-summary
+#| tbl-cap: "Tip Percentage Summary by Day"
+
+pct_summary = tips.groupby("day")["tip_pct"].agg(
+    ["mean", "median", "std"]
+).round(2).reindex(day_order)
+pct_summary.columns = ["Mean (%)", "Median (%)", "Std Dev (%)"]
+pct_summary
+```
+
+## Contextual Factors {#sec-contextual-factors}
+
+Beyond the day of the week, several contextual variables may moderate tipping
+behavior. This section examines meal time, party size, and smoking status as
+potential confounders or effect modifiers, drawing on statistical learning
+principles [@james2021introduction].
+
+### Meal Time Interaction {#sec-meal-time}
+
+The dataset distinguishes between lunch and dinner. Since certain days only
+have one meal type (e.g., Saturday and Sunday are dinner-only in this dataset),
+meal time is partially confounded with day.
+
+```{python}
+#| label: fig-day-time
+#| fig-cap: "Tip Amount by Day and Meal Time"
+
+fig, ax = plt.subplots(figsize=(8, 5))
+sns.boxplot(data=tips, x="day", y="tip", hue="time",
+            order=day_order, palette="Paired", ax=ax)
+ax.set_xlabel("Day of the Week")
+ax.set_ylabel("Tip Amount ($)")
+ax.set_title("Tips by Day and Meal Time")
+ax.legend(title="Meal Time")
+plt.tight_layout()
+plt.show()
+```
+
+As @fig-day-time illustrates, Thursday and Friday include both lunch and dinner
+observations. Thursday lunch tips are notably lower than Thursday dinner tips,
+which is consistent with the general pattern that dinner bills—and therefore
+tips—tend to be larger.
+
+#### Day-Time Crosstab {#sec-crosstab}
+
+@tbl-day-time-counts shows the number of observations for each day-time
+combination, highlighting the imbalanced design.
+
+```{python}
+#| label: tbl-day-time-counts
+#| tbl-cap: "Observation Counts by Day and Meal Time"
+
+pd.crosstab(tips["day"], tips["time"]).reindex(day_order)
+```
+
+### Party Size Effects {#sec-party-size}
+
+Larger parties tend to generate larger bills and, consequently, larger tips.
+@fig-party-scatter examines whether this relationship varies by day.
+
+```{python}
+#| label: fig-party-scatter
+#| fig-cap: "Relationship Between Party Size and Tip Amount by Day"
+
+fig, ax = plt.subplots(figsize=(8, 5))
+sns.scatterplot(data=tips, x="size", y="tip", hue="day",
+                hue_order=day_order, palette="deep",
+                alpha=0.7, s=60, ax=ax)
+ax.set_xlabel("Party Size")
+ax.set_ylabel("Tip Amount ($)")
+ax.set_title("Party Size vs. Tip by Day")
+ax.legend(title="Day")
+plt.tight_layout()
+plt.show()
+```
+
+::: {.callout-warning}
+## Confounding Alert
+Party size is a strong confounder in this analysis. Weekend days (Saturday and
+Sunday) tend to have larger parties, which inflates the absolute tip amounts
+for those days. Any comparison of tips across days should account for party
+size differences.
+:::
+
+#### Mean Tips by Party Size and Day {#sec-party-day-table}
+
+@tbl-party-day breaks down mean tip amounts by party size and day.
+
+```{python}
+#| label: tbl-party-day
+#| tbl-cap: "Mean Tip ($) by Party Size and Day"
+
+party_day = tips.groupby(["size", "day"])["tip"].mean().unstack()
+party_day = party_day[day_order].round(2)
+party_day
+```
+
+### Smoking Status {#sec-smoking}
+
+Finally, we examine whether smoking status interacts with day-of-week tipping
+patterns. @fig-smoke-day shows tip distributions split by smoker status and day.
+
+```{python}
+#| label: fig-smoke-day
+#| fig-cap: "Tip Amounts by Day and Smoking Status"
+
+fig, axes = plt.subplots(1, 2, figsize=(8, 4), sharey=True)
+
+for ax, smoker_val, title in zip(axes, ["No", "Yes"],
+                                  ["Non-Smokers", "Smokers"]):
+    subset = tips[tips["smoker"] == smoker_val]
+    sns.boxplot(data=subset, x="day", y="tip", order=day_order,
+                palette="Set2", ax=ax)
+    ax.set_title(title)
+    ax.set_xlabel("Day of the Week")
+    ax.set_ylabel("Tip Amount ($)")
+
+plt.suptitle("Tipping Patterns by Smoking Status", y=1.02)
+plt.tight_layout()
+plt.show()
+```
+
+::: {.callout-caution}
+## Small Sample Sizes
+Some day-smoker combinations have very few observations. Interpret the smoking
+status results with caution, particularly for Friday smokers and Thursday
+smokers where cell sizes are small.
+:::
+
+## Conclusions and Recommendations {#sec-conclusions}
+
+### Summary of Findings {#sec-summary}
+
+This analysis of the tips dataset [@waskom2021seaborn] reveals several key
+patterns regarding day-of-week tipping behavior:
+
+- **Sunday** produces the highest average tip in absolute dollars, as shown in
+  @tbl-day-stats and @fig-tip-by-day.
+- **Tip percentages** are more stable across days (@fig-tip-pct and
+  @tbl-pct-summary), suggesting that bill size—not generosity—drives most of
+  the day-level variation.
+- **Party size** is a major confounder (@fig-party-scatter), with larger weekend
+  parties generating larger tips.
+- **Meal time** partially explains within-day variation, particularly on
+  Thursday (@fig-day-time).
+
+### Practical Implications {#sec-implications}
+
+For restaurant managers and servers, these findings suggest:
+
+1. **Staffing**: Prioritize experienced servers on Sunday dinner shifts, where
+   the highest absolute tips are earned.
+2. **Scheduling**: Servers seeking higher earnings should prefer weekend dinner
+   shifts over weekday lunch shifts.
+3. **Expectations**: Tip percentages are relatively consistent (~15–17%) across
+   all days, so higher earnings come from higher-bill tables, not more generous
+   patrons.
+
+#### Limitations {#sec-limitations}
+
+This analysis has several limitations:
+
+- The data come from a single restaurant and a single waiter.
+- The sample is modest (N = 244) and may not generalize.
+- Temporal effects (e.g., holidays, seasons) are not captured.
+
+#### Future Directions {#sec-future}
+
+Future work could extend this analysis by incorporating data from multiple
+restaurants, modeling tip percentage with regression techniques
+[@james2021introduction], and examining temporal trends over longer periods.
+
+## References {.unnumbered}
+
+::: {#refs}
+:::
