@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Your Name">
-<meta name="dcterms.date" content="2026-02-13">
+<meta name="dcterms.date" content="2026-02-16">
 
 <title>When Do Patrons Tip Best? An Analysis of Restaurant Tipping Patterns</title>
 <style>
@@ -93,6 +93,35 @@ div.csl-indent {
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
 
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
 
 </head>
 
@@ -120,10 +149,15 @@ div.csl-indent {
   <li><a href="#sec-party-size" id="toc-sec-party-size" class="nav-link" data-scroll-target="#sec-party-size"><span class="header-section-number">3.2</span> Party Size Effects</a></li>
   <li><a href="#sec-smoking" id="toc-sec-smoking" class="nav-link" data-scroll-target="#sec-smoking"><span class="header-section-number">3.3</span> Smoking Status</a></li>
   </ul></li>
-  <li><a href="#sec-conclusions" id="toc-sec-conclusions" class="nav-link" data-scroll-target="#sec-conclusions"><span class="header-section-number">4</span> Conclusions and Recommendations</a>
+  <li><a href="#sec-reproducibility" id="toc-sec-reproducibility" class="nav-link" data-scroll-target="#sec-reproducibility"><span class="header-section-number">4</span> Demonstrating Thorough Reproducibility</a>
   <ul class="collapse">
-  <li><a href="#sec-summary" id="toc-sec-summary" class="nav-link" data-scroll-target="#sec-summary"><span class="header-section-number">4.1</span> Summary of Findings</a></li>
-  <li><a href="#sec-implications" id="toc-sec-implications" class="nav-link" data-scroll-target="#sec-implications"><span class="header-section-number">4.2</span> Practical Implications</a></li>
+  <li><a href="#sec-repro-best-day" id="toc-sec-repro-best-day" class="nav-link" data-scroll-target="#sec-repro-best-day"><span class="header-section-number">4.1</span> Which Day Has the Highest Mean Tip?</a></li>
+  <li><a href="#sec-repro-chi2" id="toc-sec-repro-chi2" class="nav-link" data-scroll-target="#sec-repro-chi2"><span class="header-section-number">4.2</span> Is Tipping Behavior Independent of Day?</a></li>
+  </ul></li>
+  <li><a href="#sec-conclusions" id="toc-sec-conclusions" class="nav-link" data-scroll-target="#sec-conclusions"><span class="header-section-number">5</span> Conclusions and Recommendations</a>
+  <ul class="collapse">
+  <li><a href="#sec-summary" id="toc-sec-summary" class="nav-link" data-scroll-target="#sec-summary"><span class="header-section-number">5.1</span> Summary of Findings</a></li>
+  <li><a href="#sec-implications" id="toc-sec-implications" class="nav-link" data-scroll-target="#sec-implications"><span class="header-section-number">5.2</span> Practical Implications</a></li>
   </ul></li>
   <li><a href="#references" id="toc-references" class="nav-link" data-scroll-target="#references">References</a></li>
   </ul>
@@ -150,7 +184,7 @@ div.csl-indent {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 13, 2026</p>
+      <p class="date">February 16, 2026</p>
     </div>
   </div>
   
@@ -207,7 +241,7 @@ About the Dataset
 Table&nbsp;1: Summary Statistics of Tips by Day of the Week
 </figcaption>
 <div aria-describedby="tbl-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="58">
 <div>
 
 
@@ -297,7 +331,7 @@ Reading This Report
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p>Each section builds on the previous one. <a href="#sec-tipping-by-day" class="quarto-xref">Section&nbsp;2</a> examines raw tipping patterns, <a href="#sec-contextual-factors" class="quarto-xref">Section&nbsp;3</a> explores moderating variables, and <a href="#sec-conclusions" class="quarto-xref">Section&nbsp;4</a> synthesizes the findings into actionable insights.</p>
+<p>Each section builds on the previous one. <a href="#sec-tipping-by-day" class="quarto-xref">Section&nbsp;2</a> examines raw tipping patterns, <a href="#sec-contextual-factors" class="quarto-xref">Section&nbsp;3</a> explores moderating variables, and <a href="#sec-conclusions" class="quarto-xref">Section&nbsp;5</a> synthesizes the findings into actionable insights.</p>
 </div>
 </div>
 </section>
@@ -365,7 +399,7 @@ Figure&nbsp;1: Distribution of Tip Amounts by Day of the Week
 Table&nbsp;2: Mean Tip with 95% Confidence Intervals by Day
 </figcaption>
 <div aria-describedby="tbl-day-stats-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="cell-output cell-output-display" data-execution_count="60">
 <div>
 
 
@@ -514,7 +548,7 @@ Key Finding
 Table&nbsp;3: Tip Percentage Summary by Day
 </figcaption>
 <div aria-describedby="tbl-pct-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="63">
 <div>
 
 
@@ -617,7 +651,7 @@ Figure&nbsp;4: Tip Amount by Day and Meal Time
 Table&nbsp;4: Observation Counts by Day and Meal Time
 </figcaption>
 <div aria-describedby="tbl-day-time-counts-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="65">
 <div>
 
 
@@ -725,7 +759,7 @@ Confounding Alert
 Table&nbsp;5: Mean Tip ($) by Party Size and Day
 </figcaption>
 <div aria-describedby="tbl-party-day-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div class="cell-output cell-output-display" data-execution_count="67">
 <div>
 
 
@@ -849,10 +883,119 @@ Small Sample Sizes
 </div>
 </section>
 </section>
-<section id="sec-conclusions" class="level2" data-number="4">
-<h2 data-number="4" class="anchored" data-anchor-id="sec-conclusions"><span class="header-section-number">4</span> Conclusions and Recommendations</h2>
-<section id="sec-summary" class="level3" data-number="4.1">
-<h3 data-number="4.1" class="anchored" data-anchor-id="sec-summary"><span class="header-section-number">4.1</span> Summary of Findings</h3>
+<section id="sec-reproducibility" class="level2" data-number="4">
+<h2 data-number="4" class="anchored" data-anchor-id="sec-reproducibility"><span class="header-section-number">4</span> Demonstrating Thorough Reproducibility</h2>
+<p>A key advantage of Quarto is that code and narrative can live in the same document. This means we can write prose that adapts automatically when data change. Rather than hard-coding a conclusion, we let the code determine what to say.</p>
+<p>For a deeper discussion of this principle, see <a href="resources/maximize_reproducibility.md">Maximizing Reproducibility</a>.</p>
+<section id="sec-repro-best-day" class="level3" data-number="4.1">
+<h3 data-number="4.1" class="anchored" data-anchor-id="sec-repro-best-day"><span class="header-section-number">4.1</span> Which Day Has the Highest Mean Tip?</h3>
+<p>Below, we programmatically identify the best tipping day and report the result in a sentence that will remain correct even if the underlying data are filtered, extended, or replaced.</p>
+<div id="cell-repro-best-day" class="cell" data-execution_count="13">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown, display</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>mean_tips <span class="op">=</span> tips.groupby(<span class="st">"day"</span>)[<span class="st">"tip"</span>].mean()</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>best_day <span class="op">=</span> mean_tips.idxmax()</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>best_val <span class="op">=</span> mean_tips.<span class="bu">max</span>()</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>worst_day <span class="op">=</span> mean_tips.idxmin()</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>worst_val <span class="op">=</span> mean_tips.<span class="bu">min</span>()</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>narrative <span class="op">=</span> (</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"Among the four days in the dataset, </span><span class="sc">{</span>best_day<span class="sc">}</span><span class="ss"> has the highest "</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"mean tip at $</span><span class="sc">{</span>best_val<span class="sc">:.2f}</span><span class="ss">, while </span><span class="sc">{</span>worst_day<span class="sc">}</span><span class="ss"> has the lowest "</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>    <span class="ss">f"at $</span><span class="sc">{</span>worst_val<span class="sc">:.2f}</span><span class="ss">. "</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>diff <span class="op">=</span> best_val <span class="op">-</span> worst_val</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> diff <span class="op">&gt;</span> <span class="fl">0.50</span>:</span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    narrative <span class="op">+=</span> (</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"The difference of $</span><span class="sc">{</span>diff<span class="sc">:.2f}</span><span class="ss"> is notable and may warrant further "</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"investigation into what drives higher spending on </span><span class="sc">{</span>best_day<span class="sc">}</span><span class="ss">."</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>    narrative <span class="op">+=</span> (</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"The difference of $</span><span class="sc">{</span>diff<span class="sc">:.2f}</span><span class="ss"> is modest, suggesting that day of "</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"the week alone is not a strong predictor of tip amount."</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>display(Markdown(narrative))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="repro-best-day" class="cell-output cell-output-display cell-output-markdown">
+<p>Among the four days in the dataset, Sun has the highest mean tip at $3.26, while Fri has the lowest at $2.73. The difference of $0.52 is notable and may warrant further investigation into what drives higher spending on Sun.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Why This Matters
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>The paragraph above is not typed by hand. It is generated by the code block. If the dataset changes—say, Friday observations are removed or new data are appended—the sentence rewrites itself on the next render. No manual editing required.</p>
+</div>
+</div>
+</section>
+<section id="sec-repro-chi2" class="level3" data-number="4.2">
+<h3 data-number="4.2" class="anchored" data-anchor-id="sec-repro-chi2"><span class="header-section-number">4.2</span> Is Tipping Behavior Independent of Day?</h3>
+<p>We can apply the same principle to a statistical test. A chi-squared test evaluates whether the distribution of tip quality (above or below median) is independent of the day of the week.</p>
+<div id="cell-repro-chi2" class="cell" data-execution_count="14">
+<details class="code-fold">
+<summary>Show code</summary>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.stats <span class="im">import</span> chi2_contingency</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>tips[<span class="st">"above_median_tip"</span>] <span class="op">=</span> tips[<span class="st">"tip"</span>] <span class="op">&gt;=</span> tips[<span class="st">"tip"</span>].median()</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>contingency <span class="op">=</span> pd.crosstab(tips[<span class="st">"day"</span>], tips[<span class="st">"above_median_tip"</span>])</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>chi2, p_value, dof, expected <span class="op">=</span> chi2_contingency(contingency)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>conclusion <span class="op">=</span> (</span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"A chi-squared test of independence was conducted to determine whether "</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">"the proportion of above-median tips differs by day of the week. "</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> p_value <span class="op">&lt;</span> <span class="fl">0.05</span>:</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    conclusion <span class="op">+=</span> (</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"The test was statistically significant "</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"($</span><span class="ch">\\</span><span class="ss">chi^2$ = </span><span class="sc">{</span>chi2<span class="sc">:.2f}</span><span class="ss">, df = </span><span class="sc">{</span>dof<span class="sc">}</span><span class="ss">, p = </span><span class="sc">{</span>p_value<span class="sc">:.4f}</span><span class="ss">), "</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"suggesting that tipping quality is not independent of the day "</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"of the week."</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="cf">else</span>:</span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>    conclusion <span class="op">+=</span> (</span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"The test was not statistically significant "</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"($</span><span class="ch">\\</span><span class="ss">chi^2$ = </span><span class="sc">{</span>chi2<span class="sc">:.2f}</span><span class="ss">, df = </span><span class="sc">{</span>dof<span class="sc">}</span><span class="ss">, p = </span><span class="sc">{</span>p_value<span class="sc">:.4f}</span><span class="ss">), "</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"suggesting that tipping quality is independent of the day "</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>        <span class="ss">f"of the week—patrons tip at similar rates regardless of the day."</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>display(Markdown(conclusion))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</details>
+<div id="repro-chi2" class="cell-output cell-output-display cell-output-markdown">
+<p>A chi-squared test of independence was conducted to determine whether the proportion of above-median tips differs by day of the week. The test was statistically significant (<span class="math inline">\(\chi^2\)</span> = 8.55, df = 3, p = 0.0359), suggesting that tipping quality is not independent of the day of the week.</p>
+</div>
+</div>
+<div class="callout callout-style-default callout-important callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Reproducibility in Action
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>This code block above handles the significant and non-significant cases. If future data produce a different outcome, the narrative flips automatically. The reader always sees a conclusion that matches the numbers.</p>
+</div>
+</div>
+</section>
+</section>
+<section id="sec-conclusions" class="level2" data-number="5">
+<h2 data-number="5" class="anchored" data-anchor-id="sec-conclusions"><span class="header-section-number">5</span> Conclusions and Recommendations</h2>
+<section id="sec-summary" class="level3" data-number="5.1">
+<h3 data-number="5.1" class="anchored" data-anchor-id="sec-summary"><span class="header-section-number">5.1</span> Summary of Findings</h3>
 <p>This analysis of the tips dataset <span class="citation" data-cites="waskom2021seaborn">(<a href="#ref-waskom2021seaborn" role="doc-biblioref">Waskom, 2021</a>)</span> reveals several key patterns regarding day-of-week tipping behavior:</p>
 <ul>
 <li><strong>Sunday</strong> produces the highest average tip in absolute dollars, as shown in <a href="#tbl-day-stats" class="quarto-xref">Table&nbsp;2</a> and <a href="#fig-tip-by-day" class="quarto-xref">Figure&nbsp;1</a>.</li>
@@ -861,16 +1004,16 @@ Small Sample Sizes
 <li><strong>Meal time</strong> partially explains within-day variation, particularly on Thursday (<a href="#fig-day-time" class="quarto-xref">Figure&nbsp;4</a>).</li>
 </ul>
 </section>
-<section id="sec-implications" class="level3" data-number="4.2">
-<h3 data-number="4.2" class="anchored" data-anchor-id="sec-implications"><span class="header-section-number">4.2</span> Practical Implications</h3>
+<section id="sec-implications" class="level3" data-number="5.2">
+<h3 data-number="5.2" class="anchored" data-anchor-id="sec-implications"><span class="header-section-number">5.2</span> Practical Implications</h3>
 <p>For restaurant managers and servers, these findings suggest:</p>
 <ol type="1">
 <li><strong>Staffing</strong>: Prioritize experienced servers on Sunday dinner shifts, where the highest absolute tips are earned.</li>
 <li><strong>Scheduling</strong>: Servers seeking higher earnings should prefer weekend dinner shifts over weekday lunch shifts.</li>
 <li><strong>Expectations</strong>: Tip percentages are relatively consistent (~15–17%) across all days, so higher earnings come from higher-bill tables, not more generous patrons.</li>
 </ol>
-<section id="sec-limitations" class="level4" data-number="4.2.1">
-<h4 data-number="4.2.1" class="anchored" data-anchor-id="sec-limitations"><span class="header-section-number">4.2.1</span> Limitations</h4>
+<section id="sec-limitations" class="level4" data-number="5.2.1">
+<h4 data-number="5.2.1" class="anchored" data-anchor-id="sec-limitations"><span class="header-section-number">5.2.1</span> Limitations</h4>
 <p>This analysis has several limitations:</p>
 <ul>
 <li>The data come from a single restaurant and a single waiter.</li>
@@ -878,8 +1021,8 @@ Small Sample Sizes
 <li>Temporal effects (e.g., holidays, seasons) are not captured.</li>
 </ul>
 </section>
-<section id="sec-future" class="level4" data-number="4.2.2">
-<h4 data-number="4.2.2" class="anchored" data-anchor-id="sec-future"><span class="header-section-number">4.2.2</span> Future Directions</h4>
+<section id="sec-future" class="level4" data-number="5.2.2">
+<h4 data-number="5.2.2" class="anchored" data-anchor-id="sec-future"><span class="header-section-number">5.2.2</span> Future Directions</h4>
 <p>Future work could extend this analysis by incorporating data from multiple restaurants, modeling tip percentage with regression techniques <span class="citation" data-cites="james2021introduction">(<a href="#ref-james2021introduction" role="doc-biblioref">James et al., 2021</a>)</span>, and examining temporal trends over longer periods.</p>
 </section>
 </section>
