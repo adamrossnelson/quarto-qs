@@ -94,6 +94,11 @@ if ($FilePrefix -ne "memo_template") {
 }
 Set-Content -Path "$FilePrefix.qmd" -Value $content -NoNewline
 
+# Update slides.qmd bibliography to match the project's .bib file name
+$slidesContent = Get-Content -Path "slides.qmd" -Raw
+$slidesContent = $slidesContent -replace [regex]::Escape("bibliography: references.bib"), "bibliography: ${FilePrefix}_refs.bib"
+Set-Content -Path "slides.qmd" -Value $slidesContent -NoNewline
+
 # Create a minimal _quarto.yml so `quarto render` and `quarto preview`
 # work without specifying a file name.
 $quartoYml = @"
