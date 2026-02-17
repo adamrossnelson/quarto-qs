@@ -71,6 +71,9 @@ _book/
 _freeze/
 .quarto/
 
+manuscript.docx
+
+
 # =============================================================================
 # Data Files (excluded by default to prevent large data from entering repo)
 # =============================================================================
