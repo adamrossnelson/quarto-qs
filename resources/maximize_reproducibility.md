@@ -16,9 +16,6 @@ tips = sns.load_dataset('tips')
 
 ## Analysis (Not Highly Reproducible)
 
-> [!WARNING]
-> This not highly reproducible approach is not the way to go. Instead look below under the "Analysis (Highly Reproducible)" section for a better approach.
-
 ```{python}
 # RQ: Is there a relationship between day of the week and smoking status?
 chi2, p_value, dof, expected = chi2_contingency(
@@ -39,10 +36,33 @@ However if new data, more data, differently filtered data, went through the same
 
 > A Chi-squared test of independence finds a Chi-Squared statistic that can be used to evaluate the relationship between two categorical variables. These results (p = 0.23990000, Ch2=4.25670000) suggest that there is no relatinship between the day of the week and the patron's smoking preference.
 
-## Analysis (Highly Reproducible)
+# The Case For These Additional Efforts
 
-> [!IMPORTANT]
-> This highly reproducible approach is the way to go.
+Writing code that handles both outcomes (significant and not significant, expected and unexpected—takes more time upfront. It is tempting to skip this work. After all, you already know what the result is. You ran the analysis, you saw the p-value, and you wrote a sentence that describes it. Why bother coding out the alternative?
+
+The answer is that a Quarto document is not a static report. It is a living program. Every time you render it, the code runs again from scratch. That is the entire point. And anything that runs again can produce a different result.
+
+## Data Changes More Often Than You Think
+
+Datasets grow. Filters get revised. A colleague notices duplicate records and removes them. A new quarter of data arrives. An upstream data provider corrects an error. In each of these cases, the numbers change. If your prose is hard-coded to describe one specific outcome, the document will render without error but will now contain a statement that contradicts its own tables and figures. The reader has no way to know which is correct—the text or the numbers. This is worse than a crash. A crash tells you something is wrong. A silently incorrect narrative does not.
+
+## Quarto Makes This Easy
+
+The `display(Markdown(...))` pattern shown above is lightweight. You build a string with f-string interpolation, branch on a condition, and display the result. Quarto renders the Markdown inline, so the output reads like normal prose—not like code output. The reader never sees the `if/else`. They see a coherent paragraph that always matches the data, no matter what the data says.
+
+This is one of Quarto's core strengths. Because code and narrative live in the same file, you can make the narrative depend on the code. A traditional workflow—run analysis in one tool, write report in another—cannot do this. The two artifacts are disconnected, and keeping them in sync is manual, error-prone work.
+
+## The Cost of Not Doing It
+
+Consider what happens when you skip this step. You hard-code a conclusion. Months later, someone re-renders the document with updated data. The statistical test now returns a non-significant result, but the text still says the relationship is significant. If the reader catches the contradiction, they lose trust in the entire report. If they do not catch it, they walk away with a false conclusion. Either outcome is bad, and both are preventable.
+
+## A Habit Worth Building
+
+The additional effort is small—an `if/else` block and a few f-strings—but the payoff compounds over time. Every document you write this way is robust to data changes by default. You stop worrying about whether your prose matches your numbers because the code guarantees it. You can hand the `.qmd` file to a collaborator, point them at a new dataset, and know that the rendered output will be internally consistent.
+
+This is what reproducibility actually means in practice. Not just that someone *can* rerun your code and get the same numbers, but that when the numbers change, the story changes with them.
+
+## Analysis (Highly Reproducible)
 
 ```{python}
 # Describe the test
@@ -61,6 +81,7 @@ else:
 display(Markdown(conclusion))
 ```
 
+
 The expected output from this reproducible code block is:
 
 > The Chi-squared test of independence examines relationships between two categorical variables. It produces a test statistic for evaluation. The results are statistically significant (p ≤ 0.00001057, χ²=25.7872). We reject the null hypothesis. Given this evidene we conclude a relationship exists between day of week and smoking preference.
@@ -69,29 +90,3 @@ However if new data, more data, differently filtered data, went through the same
 
 > The Chi-squared test of independence examines relationships between two categorical variables. It produces a test statistic for evaluation. The results are not significant (p = 0.23990000, χ²=4.25670000). We fail to reject the null hypothesis. Given this result we conclude we have no evidence to sho there is a relationship between day of week and smoking preference.
 
-# The Case For These Additional Efforts
-
-Writing code that handles both outcomes (significant and not significant) (expected and unexpected) takes more time upfront. It is tempting to skip this work. It may seem optional. It may feel pointless, afterall you (usually or often) already know what the result is at drafting time. You ran the analysis, you saw the p-value, and you wrote a sentence that describes your approach and its result. Why bother coding out the alternative?
-
-The answer is that a Quarto document is not a static report. It is a living program. Every time you render it, the code runs again from scratch. And anything that runs again can produce a different result. If your prose is hard-coded to describe one specific outcome, the document will render without error but will now contain a statement that contradicts its own tables and figures. The reader has no way to know which is correct—the text or the numbers. This is worse than a crash. A crash tells you something is wrong. A silently incorrect narrative does not.
-
-## Quarto Makes This Easy
-
-The `display(Markdown(...))` pattern shown above is lightweight. You build a string with f-string, branch on a condition, and display the result. Quarto renders the Markdown inline, so the output reads like normal prose. The reader never sees the `if/else`. They see a coherent paragraph that always matches the data, no matter what the data say.
-
-This is one of Quarto's core strengths. Because code and narrative live in the same file, you can make the narrative depend on the code. A far less-efficient workflow, that you may currently be more familiar with, is to run and analysis in one tool and then write report in another. In your future scientific writing you should avoid that less-efficient practice. Using one tool (Quarto) keeping them in sync is a superior approach.
-
-## The Cost of Not Doing It
-
-Consider what happens when you skip this step. You hard-code a conclusion. Months later, someone re-renders the document with updated data. The statistical test now returns a non-significant result, but the text still says the relationship is significant. 
-
-- If the reader catches the contradiction, they lose trust in the entire report. 
--If they do not catch it, they walk away with a false conclusion. 
-
-Either outcome is bad. Both are preventable.
-
-## A Habit Worth Building
-
-The additional effort, a small `if/else` block and a few f-strings, is small but the payoff is massive. When every document you write this way is robust to data changes by default you worry less about whether your prose matches your numbers. You can hand the `.qmd` file to a collaborator, point them at a new dataset, and know that the rendered output will be internally consistent.
-
-This is what reproducibility actually means in practice. Not just that someone can rerun your code and get the same numbers, but that when the numbers change, the story changes with them.

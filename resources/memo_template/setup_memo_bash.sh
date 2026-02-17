@@ -61,6 +61,7 @@ echo "Downloading template files..."
 curl -sO "$BASE_URL/memo_template.qmd"
 curl -sO "$BASE_URL/memo_template_refs.bib"
 curl -sO "$BASE_URL/memo_template.docx"
+curl -sO "https://raw.githubusercontent.com/adamrossnelson/quarto-qs/refs/heads/main/slides.qmd"
 
 # Ask about renaming file prefix
 read -rp "Rename files to Quarto default prefix 'index'? [Y/n]: " rename_choice
@@ -92,6 +93,15 @@ sed -i.bak "s|author: \"Your Name\"|author: \"$author_name\"|" "${file_prefix}.q
 sed -i.bak "s|date: Feb 1, 2030|date: $memo_date|" "${file_prefix}.qmd"
 sed -i.bak "s|Did vehicles become more efficient over time?|$research_question|" "${file_prefix}.qmd"
 
+# Create a minimal _quarto.yml so `quarto render` and `quarto preview`
+# work without specifying a file name.
+cat > _quarto.yml <<EOF
+project:
+  type: default
+  render:
+    - ${file_prefix}.qmd
+EOF
+
 # Clean up sed backup files
 rm -f "${file_prefix}.qmd.bak"
 
@@ -108,5 +118,5 @@ echo "Next steps:"
 echo "  1. cd $folder_name"
 echo "  2. Edit ${file_prefix}.qmd — replace the example analysis with your own"
 echo "  3. Edit ${file_prefix}_refs.bib — add your references"
-echo "  4. quarto render ${file_prefix}.qmd"
-echo "  5. quarto preview ${file_prefix}.qmd"
+echo "  4. quarto render              (or: quarto render ${file_prefix}.qmd)"
+echo "  5. quarto preview             (or: quarto preview ${file_prefix}.qmd)"

@@ -60,6 +60,7 @@ Write-Host "Downloading template files..."
 Invoke-WebRequest -Uri "$BaseUrl/memo_template.qmd" -OutFile "memo_template.qmd"
 Invoke-WebRequest -Uri "$BaseUrl/memo_template_refs.bib" -OutFile "memo_template_refs.bib"
 Invoke-WebRequest -Uri "$BaseUrl/memo_template.docx" -OutFile "memo_template.docx"
+Invoke-WebRequest -Uri "https://raw.githubusercontent.com/adamrossnelson/quarto-qs/refs/heads/main/slides.qmd" -OutFile "slides.qmd"
 
 # Ask about renaming file prefix
 $RenameChoice = Read-Host "Rename files to Quarto default prefix 'index'? [Y/n]"
@@ -93,6 +94,16 @@ if ($FilePrefix -ne "memo_template") {
 }
 Set-Content -Path "$FilePrefix.qmd" -Value $content -NoNewline
 
+# Create a minimal _quarto.yml so `quarto render` and `quarto preview`
+# work without specifying a file name.
+$quartoYml = @"
+project:
+  type: default
+  render:
+    - $FilePrefix.qmd
+"@
+Set-Content -Path "_quarto.yml" -Value $quartoYml
+
 Write-Host ""
 Write-Host "Memo project created in: $(Get-Location)"
 Write-Host "  Folder:   $FolderName"
@@ -106,5 +117,5 @@ Write-Host "Next steps:"
 Write-Host "  1. cd $FolderName"
 Write-Host "  2. Edit $FilePrefix.qmd - replace the example analysis with your own"
 Write-Host "  3. Edit ${FilePrefix}_refs.bib - add your references"
-Write-Host "  4. quarto render $FilePrefix.qmd"
-Write-Host "  5. quarto preview $FilePrefix.qmd"
+Write-Host "  4. quarto render              (or: quarto render $FilePrefix.qmd)"
+Write-Host "  5. quarto preview             (or: quarto preview $FilePrefix.qmd)"
