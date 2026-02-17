@@ -26,6 +26,18 @@ The template is opinionated toward brevity and density. Some of the key decision
 - **PDF and Word download links** — the HTML view includes sidebar links to download the rendered PDF and Word versions.
 - **Bibliography support** — citations are managed through a `.bib` file with APA-style formatting.
 
+## For Use With R
+
+First ensure R has been installed on your system from [r-project.org](https://r-project.org) or via Homebrew: `brew install r`) You will also need the `knitr` and `rmarkdown` R packages:
+
+  ```r
+  install.packages(c("knitr", "rmarkdown"))
+  ```
+
+Replace `{python}` code blocks with `{r}` code blocks. Quarto auto-detects the engine based on the code block language. A `.qmd` with `{r}` blocks will automatically use knitr instead of Jupyter.
+
+You can have both Python and R blocks in the same `.qmd` by using the Jupyter engine with the reticulate R package, or by setting `engine: knitr` and calling Python from R via reticulate. However, mixing engines in a single document adds complexity — it's simpler to keep each `.qmd` in one language.
+
 ## Template Sections
 
 The memo follows a three-section structure:

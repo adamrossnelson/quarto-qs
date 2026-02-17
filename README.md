@@ -4,6 +4,8 @@ This repository contains ready-to-use examples of [Quarto](https://quarto.org), 
 
 The first main examples here (`manuscript.qbd` and `slides.qmd`) approach a single, lighthearted research question *On which days do restaurant patrons tip their servers the best?* using the `tips` dataset from the seaborn Python library. 
 
+The examples given here are written for Python users, but the techniques are easily adaptable for R users. See the [memo template documentation](resources/memo_template.md#for-use-with-r) for tips on getting started with R.
+
 The content is contrived, but the Quarto techniques are real.
 
 ## Repository Contents

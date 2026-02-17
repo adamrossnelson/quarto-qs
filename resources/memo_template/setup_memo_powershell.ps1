@@ -6,6 +6,39 @@ $ErrorActionPreference = "Stop"
 
 $BaseUrl = "https://raw.githubusercontent.com/adamrossnelson/quarto-qs/main/resources/memo_template"
 
+# Check for dependencies
+$Missing = @()
+
+if (-not (Get-Command "quarto" -ErrorAction SilentlyContinue)) {
+    $Missing += "  [!] IMPORTANT: Quarto is not installed."
+    $Missing += "      Install from https://quarto.org/docs/get-started/"
+    $Missing += ""
+}
+
+if (-not (Get-Command "jupyter" -ErrorAction SilentlyContinue)) {
+    $Missing += "  [!] IMPORTANT: Jupyter is not installed (needed for Python code blocks)."
+    $Missing += "      Install with: pip install jupyter"
+    $Missing += ""
+}
+
+if (-not (Get-Command "Rscript" -ErrorAction SilentlyContinue)) {
+    $Missing += "  [!] IMPORTANT: R is not installed (needed for R code blocks)."
+    $Missing += "      Install from https://r-project.org"
+    $Missing += ""
+}
+
+if ($Missing.Count -gt 0) {
+    Write-Host ""
+    Write-Host "=========================================="
+    Write-Host "  Dependency Check"
+    Write-Host "=========================================="
+    foreach ($line in $Missing) { Write-Host $line }
+    Write-Host "The script will continue, but rendering"
+    Write-Host "may fail without these dependencies."
+    Write-Host "=========================================="
+    Write-Host ""
+}
+
 # Prompt for user inputs
 $FolderName = Read-Host "Folder name"
 $ProjectTitle = Read-Host "Project title"

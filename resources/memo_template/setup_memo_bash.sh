@@ -7,6 +7,39 @@ set -e
 
 BASE_URL="https://raw.githubusercontent.com/adamrossnelson/quarto-qs/main/resources/memo_template"
 
+# Check for dependencies
+missing=""
+
+if ! command -v quarto &> /dev/null; then
+    missing="${missing}\n  [!] IMPORTANT: Quarto is not installed."
+    missing="${missing}\n      Install from https://quarto.org/docs/get-started/"
+    missing="${missing}\n"
+fi
+
+if ! command -v jupyter &> /dev/null; then
+    missing="${missing}\n  [!] IMPORTANT: Jupyter is not installed (needed for Python code blocks)."
+    missing="${missing}\n      Install with: pip install jupyter"
+    missing="${missing}\n"
+fi
+
+if ! command -v Rscript &> /dev/null; then
+    missing="${missing}\n  [!] IMPORTANT: R is not installed (needed for R code blocks)."
+    missing="${missing}\n      Install from https://r-project.org or: brew install r"
+    missing="${missing}\n"
+fi
+
+if [ -n "$missing" ]; then
+    echo ""
+    echo "=========================================="
+    echo "  Dependency Check"
+    echo "=========================================="
+    echo -e "$missing"
+    echo "The script will continue, but rendering"
+    echo "may fail without these dependencies."
+    echo "=========================================="
+    echo ""
+fi
+
 # Prompt for user inputs
 read -rp "Folder name: " folder_name
 read -rp "Project title: " project_title
