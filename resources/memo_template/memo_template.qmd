@@ -1,0 +1,117 @@
+---
+title: Research Memo Template
+author: "Your Name"
+date: Feb 1, 2030
+format:
+  html:
+    toc: false
+    theme: cosmo
+    code-fold: true
+    code-tools: true
+    margin-left: 0.75in
+    margin-right: 0.75in
+    margin-top: 0.75in
+    margin-bottom: 0.75in
+    other-links:
+      - text: Download PDF
+        href: memo_template.pdf
+      - text: Download Word Document
+        href: memo_template.docx
+  pdf:
+    toc: false
+    geometry:
+      - top=0.75in
+      - bottom=0.75in
+      - left=0.75in
+      - right=0.75in
+    include-in-header:
+      text: |
+        \usepackage{titling}
+        \renewcommand{\maketitle}{}
+        \usepackage{fancyvrb}
+        \DefineVerbatimEnvironment{Highlighting}{Verbatim}{fontsize=\small,commandchars=\\\{\}}
+        \usepackage{titlesec}
+        \titleformat{\section}{\normalfont\Large\bfseries}{\thesection}{1em}{}
+        \titleformat{\subsection}{\normalfont\large\bfseries}{\thesubsection}{1em}{}
+        \titleformat{\subsubsection}{\normalfont\normalsize\bfseries}{\thesubsubsection}{1em}{}
+        \titlespacing*{\section}{0pt}{0.5em}{0.25em}
+        \titlespacing*{\subsection}{0pt}{0.5em}{0.25em}
+        \titlespacing*{\subsubsection}{0pt}{0.5em}{0.25em}
+    include-before-body:
+      text: |
+        \noindent{\Large\bfseries\thetitle}\par
+        \vspace{0.25em}
+        \noindent\theauthor\hfill\thedate\par
+        \vspace{0.5em}
+        \noindent\rule{\textwidth}{0.4pt}
+        \vspace{0.5em}
+  docx:
+    toc: false
+bibliography: memo_template_refs.bib
+execute:
+  warning: false
+  message: false
+---
+```{python}
+#| include: false
+import pandas as pd
+import numpy as np
+import seaborn as sns
+import matplotlib.pyplot as plt
+from IPython.display import Markdown, display
+
+mpg = sns.load_dataset("mpg")
+```
+
+## Analytical Or Research Question
+
+Did vehicles become more efficient over time?
+
+## Answer, Response, & Summary of Restuls
+
+Yes it does appear that vehicles have become more efficient over time. Using the `mpg` dataset from Seaborn [@Waskom2021seaborn] we can see that the average fuel efficiency of vehicles has increased over the years.
+
+```{python}
+#| label: fig-mpg-trend
+#| fig-cap: "Fuel Efficiency Trends Over Time"
+
+avg_mpg_by_year = mpg.groupby('model_year')['mpg'].mean()
+
+# Instantiate the figure
+fig, ax1 = plt.subplots(1, 1, figsize=(5, 3))
+
+# Get sorted unique years for consistent positioning
+years = sorted(mpg['model_year'].unique())
+# Underneath: violin plots of MPG distribution per year
+sns.violinplot(data=mpg, x='model_year', y='mpg', order=years, ax=ax1)
+# Overlay: line chart of average MPG by year (using categorical positions)
+ax1.plot(range(len(years)), [avg_mpg_by_year[y] for y in years],
+         color='black', linewidth=2, marker='o', markersize=4, zorder=10)
+
+ax1.set_title('MPG Distribution by Model Year')
+ax1.set_xlabel('Model Year')
+ax1.set_ylabel('MPG')
+
+plt.tight_layout()
+plt.show()
+```
+
+```{python}
+#| echo: false
+
+# Give efficiency at index 0 (earliest yr) and index -1 (latest year)
+display(Markdown(
+  f'The average fuel efficiency of vehicles has increased from {avg_mpg_by_year.iloc[0]:.2f} MPG in {avg_mpg_by_year.index[0]} to {avg_mpg_by_year.iloc[-1]:.2f} MPG in {avg_mpg_by_year.index[-1]}.'
+))
+```
+
+@fig-mpg-trend presents two overlayed visualizations examining fuel efficiency: a line chart showing average miles per gallon (MPG) by model year, and a violin plot displaying the full MPG distribution for each year. The data spans 1970 through 1982. The line plots average MPG on the y-axis (ranging from approximately 15 to 35) against model year on the x-axis. The violins plot vehicle MPG values are distributed within each year. Reading the line chart, we can see that average fuel efficiency rose from roughly 17 MPG in 1970 to approximately 31 MPG by 1982. Efficiency nearly doubling. The early years (1970–1973) show narrow violin shapes clustered between 10 and 25 MPG, whereas later years (1978–1982) display much wider distributions extending well above 40 MPG. Not only did average efficiency improve, but manufacturers also began offering a broader range of fuel-efficient options The sharp rise around 1975–1976 may reflect automaker responses to the 1973 oil crisis and subsequent federal fuel economy standards. Together, these visuals demonstrate that vehicles did become more efficient over time.
+
+## Remaining Questions + Uncertainties
+
+Does the trend hold when controlling for vehicle weight, engine displacement, or number of cylinders? The current analysis examines only the marginal relationship between model year and MPG. Additionally, the dataset ends at 1982—it is unclear whether efficiency gains continued at the same rate in subsequent decades or plateaued after initial regulatory pressure subsided.
+
+## References {.unnumbered}
+
+::: {#refs}
+:::
