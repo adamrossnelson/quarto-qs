@@ -2,6 +2,13 @@
 title: Research Memo Template
 author: "Your Name"
 date: Feb 1, 2030
+status: draft
+keywords:
+  - quarto
+  - memo
+  - research template
+  - reproducible research
+  - python
 format:
   html:
     toc: false

@@ -3,6 +3,13 @@ title: "When Are Tip The Best?"
 subtitle: "A Day-of-Week Analysis of Restaurant Tipping Patterns"
 author: "Your Name"
 date: today
+status: draft
+keywords:
+  - quarto
+  - revealjs
+  - presentation
+  - tipping analysis
+  - data visualization
 format:
   revealjs:
     theme: simple

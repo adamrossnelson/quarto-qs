@@ -2,6 +2,13 @@
 title: "When Do Patrons Tip Best? An Analysis of Restaurant Tipping Patterns"
 author: "Your Name"
 date: today
+status: draft
+keywords:
+  - quarto
+  - tipping analysis
+  - data visualization
+  - reproducible research
+  - python
 format:
   html:
     toc: true
