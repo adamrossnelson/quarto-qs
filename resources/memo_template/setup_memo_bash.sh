@@ -2,6 +2,39 @@
 # setup_memo_bash.sh — Download and configure a Quarto research memo from the
 # quarto-qs memo_template. Run this script in the directory where you want
 # your new memo project to live.
+#
+# FILES DOWNLOADED
+# ----------------
+# This script downloads the following files into a new project folder:
+#
+#   memo_template.qmd        Quarto document with a research memo scaffold
+#                             including YAML front matter, example analysis,
+#                             and placeholders for title, author, date, and
+#                             research question. Default rename to index.qmd
+#
+#   memo_template_refs.bib   BibTeX bibliography file referenced by the .qmd.
+#                             Default rename to index_refs.qmd.
+#
+#   memo_template.docx       Word reference document that controls DOCX output
+#                             styling (fonts, headings, spacing, etc.).
+#                             Default rename to index.docx.
+#
+#   slides.qmd               Reveal.js slide deck sourced from the main
+#                             quarto-qs repository. Its bibliography line is
+#                             updated to match the project's .bib file name.
+#                             Default rename to slides.qmd.
+#
+# GENERATED FILES
+# ---------------
+# The script also creates:
+#
+#   _quarto.yml               Minimal Quarto project config so that
+#                              `quarto render` and `quarto preview` work
+#                              without specifying a file name.
+#
+# If the user chooses to rename the file prefix (default: "index"), the
+# downloaded files are renamed accordingly (e.g. index.qmd, index_refs.bib,
+# index.docx) and internal references are updated to match.
 
 set -e
 

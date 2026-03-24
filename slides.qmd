@@ -55,6 +55,13 @@ tips = sns.load_dataset("tips")
 tips["tip_pct"] = (tips["tip"] / tips["total_bill"]) * 100
 day_order = ["Thur", "Fri", "Sat", "Sun"]
 ```
+## Talking About Papers
+
+In the very important paper by @rogers2020semantics, the authors found that it is coll to use Quarto.
+
+You can also just give an assertion with a parenthetical citation this way [@rogers2020semantics].
+
+Did you know that @fig-slides-boxplot is a box plot?
 
 ## Agenda {.smaller}
 
@@ -87,6 +94,18 @@ The **tips dataset** [@waskom2021seaborn] contains 244 observations collected by
 - `day`, `time` — When the meal occurred
 - `size` — Party size
 
+## A Markdown Table
+
+::: {#tbl-mdexample}
+
+| Column 1 | Column 2 | Column 3 |
+| -------- | -------- | -------- |
+| Row 1    | Row 1    | Row 1    |
+| Row 2    | Row 2    | Row 2    |
+
+: Markdown Table Example
+:::
+
 ## Summary by Day
 
 @tbl-slides-summary shows key statistics for each day.
@@ -115,24 +134,6 @@ Notice how this slide uses `#| output-location: slide` to display the table on t
 
 # Absolute Tip Amounts {background-color="#2d4059"}
 
-## Tip Distribution by Day {.smaller}
-
-```{python}
-#| label: fig-slides-boxplot
-#| fig-cap: "Box Plot of Tip Amounts by Day"
-
-fig, ax = plt.subplots(figsize=(10, 4))
-sns.boxplot(data=tips, x="day", y="tip", order=day_order,
-            palette="Set2", ax=ax)
-ax.set_xlabel("Day of the Week")
-ax.set_ylabel("Tip Amount ($)")
-ax.set_title("Tip Amounts by Day")
-plt.tight_layout()
-plt.show()
-```
-
-**Key takeaway**: Sunday shows the highest median tip. See @fig-slides-boxplot.
-
 ## Violin Plot View
 
 @fig-slides-violin reveals the full shape of each distribution.
@@ -152,6 +153,24 @@ ax.set_title("Distribution Shape by Day")
 plt.tight_layout()
 plt.show()
 ```
+
+## Tip Distribution by Day {.smaller}
+
+```{python}
+#| label: fig-slides-boxplot
+#| fig-cap: "Box Plot of Tip Amounts by Day"
+
+fig, ax = plt.subplots(figsize=(10, 4))
+sns.boxplot(data=tips, x="day", y="tip", order=day_order,
+            palette="Set2", ax=ax)
+ax.set_xlabel("Day of the Week")
+ax.set_ylabel("Tip Amount ($)")
+ax.set_title("Tip Amounts by Day")
+plt.tight_layout()
+plt.show()
+```
+
+**Key takeaway**: Sunday shows the highest median tip. See @fig-slides-boxplot.
 
 ## Confidence Intervals {.smaller}
 

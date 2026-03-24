@@ -10,7 +10,7 @@
   <meta name="generator" content="quarto-1.6.39">
 
   <meta name="author" content="Your Name">
-  <meta name="dcterms.date" content="2026-02-17">
+  <meta name="dcterms.date" content="2026-02-24">
   <meta name="keywords" content="quarto, revealjs, presentation, tipping analysis, data visualization">
   <title>When Are Tip The Best?</title>
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -231,7 +231,13 @@ Your Name
 </div>
 </div>
 
-  <p class="date">2026-02-17</p>
+  <p class="date">2026-02-24</p>
+</section>
+<section class="slide level2">
+<h2>Talking About Papers</h2>
+<p>In the very important paper by <span class="citation" data-cites="rogers2020semantics">Rogers and McClelland (<a href="#/references" role="doc-biblioref" onclick="">2020</a>)</span>, the authors found that it is coll to use Quarto.</p>
+<p>You can also just give an assertion with a parenthetical citation this way <span class="citation" data-cites="rogers2020semantics">(<a href="#/references" role="doc-biblioref" onclick="">Rogers and McClelland 2020</a>)</span>.</p>
+<p>Did you know that <a href="#/fig-slides-boxplot" class="quarto-xref">Figure&nbsp;2</a> is a box plot?</p>
 </section>
 <section class="slide level2 smaller scrollable">
 <h2>Agenda</h2>
@@ -287,8 +293,41 @@ Your Name
 </ul>
 </section>
 <section class="slide level2">
+<h2>A Markdown Table</h2>
+<div id="tbl-mdexample" class="quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-tbl">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-mdexample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Table&nbsp;1: Markdown Table Example
+</figcaption>
+<div aria-describedby="tbl-mdexample-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<table class="caption-top">
+<thead>
+<tr class="header">
+<th>Column 1</th>
+<th>Column 2</th>
+<th>Column 3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Row 1</td>
+<td>Row 1</td>
+<td>Row 1</td>
+</tr>
+<tr class="even">
+<td>Row 2</td>
+<td>Row 2</td>
+<td>Row 2</td>
+</tr>
+</tbody>
+</table>
+</div>
+</figure>
+</div>
+</section>
+<section class="slide level2">
 <h2>Summary by Day</h2>
-<p><a href="#/tbl-slides-summary" class="quarto-xref">Table&nbsp;1</a> shows key statistics for each day.</p>
+<p><a href="#/tbl-slides-summary" class="quarto-xref">Table&nbsp;2</a> shows key statistics for each day.</p>
 <div class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href=""></a>summary <span class="op">=</span> tips.groupby(<span class="st">"day"</span>).agg(</span>
 <span id="cb1-2"><a href=""></a>    N<span class="op">=</span>(<span class="st">"tip"</span>, <span class="st">"count"</span>),</span>
@@ -318,10 +357,10 @@ Your Name
 <div id="tbl-slides-summary" class="cell quarto-float quarto-figure quarto-figure-center" data-execution_count="2" data-output-location="slide">
 <figure class="quarto-float quarto-float-tbl">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-slides-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;1: Tips Summary by Day of the Week
+Table&nbsp;2: Tips Summary by Day of the Week
 </figcaption>
 <div aria-describedby="tbl-slides-summary-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="2">
+<div class="cell-output cell-output-display" data-execution_count="62">
 <div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -397,19 +436,47 @@ Table&nbsp;1: Tips Summary by Day of the Week
 <h1>Absolute Tip Amounts</h1>
 
 </section>
-<section class="slide level2 smaller">
-<h2>Tip Distribution by Day</h2>
-<div id="cell-fig-slides-boxplot" class="cell" data-execution_count="3">
-<details class="code-fold">
-<summary>Code</summary>
+<section class="slide level2">
+<h2>Violin Plot View</h2>
+<p><a href="#/fig-slides-violin" class="quarto-xref">Figure&nbsp;1</a> reveals the full shape of each distribution.</p>
+<div id="cell-fig-slides-violin" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href=""></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
-<span id="cb2-2"><a href=""></a>sns.boxplot(data<span class="op">=</span>tips, x<span class="op">=</span><span class="st">"day"</span>, y<span class="op">=</span><span class="st">"tip"</span>, order<span class="op">=</span>day_order,</span>
-<span id="cb2-3"><a href=""></a>            palette<span class="op">=</span><span class="st">"Set2"</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb2-2"><a href=""></a>sns.violinplot(data<span class="op">=</span>tips, x<span class="op">=</span><span class="st">"day"</span>, y<span class="op">=</span><span class="st">"tip"</span>, order<span class="op">=</span>day_order,</span>
+<span id="cb2-3"><a href=""></a>               palette<span class="op">=</span><span class="st">"muted"</span>, inner<span class="op">=</span><span class="st">"quartile"</span>, ax<span class="op">=</span>ax)</span>
 <span id="cb2-4"><a href=""></a>ax.set_xlabel(<span class="st">"Day of the Week"</span>)</span>
 <span id="cb2-5"><a href=""></a>ax.set_ylabel(<span class="st">"Tip Amount ($)"</span>)</span>
-<span id="cb2-6"><a href=""></a>ax.set_title(<span class="st">"Tip Amounts by Day"</span>)</span>
+<span id="cb2-6"><a href=""></a>ax.set_title(<span class="st">"Distribution Shape by Day"</span>)</span>
 <span id="cb2-7"><a href=""></a>plt.tight_layout()</span>
 <span id="cb2-8"><a href=""></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+</section>
+<section id="" class="slide level2 output-location-slide"><h2>Violin Plot View</h2><div class="cell output-location-slide" data-execution_count="3">
+<div class="cell-output cell-output-display">
+<div id="fig-slides-violin" class="quarto-float quarto-figure quarto-figure-center">
+<figure class="quarto-float quarto-float-fig">
+<div aria-describedby="fig-slides-violin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img data-src="slides_files/figure-revealjs/fig-slides-violin-output-1.png" width="949" height="372">
+</div>
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slides-violin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figure&nbsp;1: Violin Plot of Tip Amounts by Day
+</figcaption>
+</figure>
+</div>
+</div>
+</div></section><section class="slide level2 smaller">
+<h2>Tip Distribution by Day</h2>
+<div id="cell-fig-slides-boxplot" class="cell" data-execution_count="4">
+<details class="code-fold">
+<summary>Code</summary>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href=""></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
+<span id="cb3-2"><a href=""></a>sns.boxplot(data<span class="op">=</span>tips, x<span class="op">=</span><span class="st">"day"</span>, y<span class="op">=</span><span class="st">"tip"</span>, order<span class="op">=</span>day_order,</span>
+<span id="cb3-3"><a href=""></a>            palette<span class="op">=</span><span class="st">"Set2"</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb3-4"><a href=""></a>ax.set_xlabel(<span class="st">"Day of the Week"</span>)</span>
+<span id="cb3-5"><a href=""></a>ax.set_ylabel(<span class="st">"Tip Amount ($)"</span>)</span>
+<span id="cb3-6"><a href=""></a>ax.set_title(<span class="st">"Tip Amounts by Day"</span>)</span>
+<span id="cb3-7"><a href=""></a>plt.tight_layout()</span>
+<span id="cb3-8"><a href=""></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
 <div id="fig-slides-boxplot" class="quarto-float quarto-figure quarto-figure-center">
@@ -418,45 +485,17 @@ Table&nbsp;1: Tips Summary by Day of the Week
 <img data-src="slides_files/figure-revealjs/fig-slides-boxplot-output-1.png" width="949" height="372">
 </div>
 <figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slides-boxplot-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;1: Box Plot of Tip Amounts by Day
+Figure&nbsp;2: Box Plot of Tip Amounts by Day
 </figcaption>
 </figure>
 </div>
 </div>
 </div>
-<p><strong>Key takeaway</strong>: Sunday shows the highest median tip. See <a href="#/fig-slides-boxplot" class="quarto-xref">Figure&nbsp;1</a>.</p>
+<p><strong>Key takeaway</strong>: Sunday shows the highest median tip. See <a href="#/fig-slides-boxplot" class="quarto-xref">Figure&nbsp;2</a>.</p>
 </section>
-<section class="slide level2">
-<h2>Violin Plot View</h2>
-<p><a href="#/fig-slides-violin" class="quarto-xref">Figure&nbsp;2</a> reveals the full shape of each distribution.</p>
-<div id="cell-fig-slides-violin" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode numberSource python number-lines code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href=""></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">4</span>))</span>
-<span id="cb3-2"><a href=""></a>sns.violinplot(data<span class="op">=</span>tips, x<span class="op">=</span><span class="st">"day"</span>, y<span class="op">=</span><span class="st">"tip"</span>, order<span class="op">=</span>day_order,</span>
-<span id="cb3-3"><a href=""></a>               palette<span class="op">=</span><span class="st">"muted"</span>, inner<span class="op">=</span><span class="st">"quartile"</span>, ax<span class="op">=</span>ax)</span>
-<span id="cb3-4"><a href=""></a>ax.set_xlabel(<span class="st">"Day of the Week"</span>)</span>
-<span id="cb3-5"><a href=""></a>ax.set_ylabel(<span class="st">"Tip Amount ($)"</span>)</span>
-<span id="cb3-6"><a href=""></a>ax.set_title(<span class="st">"Distribution Shape by Day"</span>)</span>
-<span id="cb3-7"><a href=""></a>plt.tight_layout()</span>
-<span id="cb3-8"><a href=""></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-
-</section>
-<section id="" class="slide level2 output-location-slide"><h2>Violin Plot View</h2><div class="cell output-location-slide" data-execution_count="4">
-<div class="cell-output cell-output-display">
-<div id="fig-slides-violin" class="quarto-float quarto-figure quarto-figure-center">
-<figure class="quarto-float quarto-float-fig">
-<div aria-describedby="fig-slides-violin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<img data-src="slides_files/figure-revealjs/fig-slides-violin-output-1.png" width="949" height="372">
-</div>
-<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-slides-violin-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Figure&nbsp;2: Violin Plot of Tip Amounts by Day
-</figcaption>
-</figure>
-</div>
-</div>
-</div></section><section class="slide level2 smaller">
+<section class="slide level2 smaller">
 <h2>Confidence Intervals</h2>
-<p><a href="#/tbl-slides-ci" class="quarto-xref">Table&nbsp;2</a> provides 95% confidence intervals for mean tips.</p>
+<p><a href="#/tbl-slides-ci" class="quarto-xref">Table&nbsp;3</a> provides 95% confidence intervals for mean tips.</p>
 <div class="cell" data-execution_count="5">
 <details class="code-fold">
 <summary>Code</summary>
@@ -478,10 +517,10 @@ Figure&nbsp;2: Violin Plot of Tip Amounts by Day
 <div id="tbl-slides-ci" class="cell quarto-float quarto-figure quarto-figure-center" data-execution_count="5">
 <figure class="quarto-float quarto-float-tbl">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-slides-ci-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;2: Mean Tip with 95% CI by Day
+Table&nbsp;3: Mean Tip with 95% CI by Day
 </figcaption>
 <div aria-describedby="tbl-slides-ci-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="65">
 <div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -625,10 +664,10 @@ Figure&nbsp;3: Tip Percentage by Day of the Week
 <div id="tbl-slides-pct" class="cell quarto-float quarto-figure quarto-figure-center" data-execution_count="7">
 <figure class="quarto-float quarto-float-tbl">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-slides-pct-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;3: Tip Percentage Summary by Day
+Table&nbsp;4: Tip Percentage Summary by Day
 </figcaption>
 <div aria-describedby="tbl-slides-pct-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="67">
 <div>
 <style scoped="">
     .dataframe tbody tr th:only-of-type {
@@ -693,7 +732,7 @@ Table&nbsp;3: Tip Percentage Summary by Day
 </figure>
 </div>
 </div>
-<p><a href="#/tbl-slides-pct" class="quarto-xref">Table&nbsp;3</a> confirms the narrow range of tip percentages across days.</p>
+<p><a href="#/tbl-slides-pct" class="quarto-xref">Table&nbsp;4</a> confirms the narrow range of tip percentages across days.</p>
 </section></section>
 <section>
 <section class="title-slide slide level1 center" data-background-color="#2d4059">
@@ -813,7 +852,7 @@ Figure&nbsp;6: Tips by Day and Smoking Status
 <div id="tbl-slides-findings" class="quarto-float quarto-figure quarto-figure-center">
 <figure class="quarto-float quarto-float-tbl">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-slides-findings-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
-Table&nbsp;4: Summary of Key Findings
+Table&nbsp;5: Summary of Key Findings
 </figcaption>
 <div aria-describedby="tbl-slides-findings-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <table class="caption-top">
@@ -872,6 +911,9 @@ Table&nbsp;4: Summary of Key Findings
 <div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
 <div id="ref-james2021introduction" class="csl-entry" role="listitem">
 James, Gareth, Daniela Witten, Trevor Hastie, and Robert Tibshirani. 2021. <em>An Introduction to Statistical Learning: With Applications in <span>R</span></em>. 2nd ed. New York, NY: Springer.
+</div>
+<div id="ref-rogers2020semantics" class="csl-entry" role="listitem">
+Rogers, Timothy T, and James L McClelland. 2020. <span>“Timothy t. Rogers University of Wisconsin-Madison.”</span>
 </div>
 <div id="ref-tufte2001visual" class="csl-entry" role="listitem">
 Tufte, Edward R. 2001. <em>The Visual Display of Quantitative Information</em>. 2nd ed. Cheshire, CT: Graphics Press.

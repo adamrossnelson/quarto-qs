@@ -74,7 +74,7 @@ mpg = sns.load_dataset("mpg")
 
 Did vehicles become more efficient over time?
 
-## Answer, Response, & Summary of Restuls
+## Answer, Response, & Summary of Results
 
 Yes it does appear that vehicles have become more efficient over time. Using the `mpg` dataset from Seaborn [@Waskom2021seaborn] we can see that the average fuel efficiency of vehicles has increased over the years.
 
